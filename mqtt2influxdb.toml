@@ -1,0 +1,17 @@
+defaultEncoding = "msgpack"
+[mqtt]
+host = "192.168.20.65:1883"
+clientID = "mqtt2influxdb"
+
+[influxdb]
+host = "http://192.168.20.65:8086"
+database = "testdb"
+
+[[mappings]]
+topic = "utilities/electricity/power/in"
+template = "electricity-in,unit={{.unit}} value={{.value}} {{.timestamp}}\n"
+
+# [[mappings]]
+# topic = "utilities/electricity/power/out"
+# template = "electricity-out,unit={{.unit}} value={{.value}} {{.timestamp}}\n"
+
