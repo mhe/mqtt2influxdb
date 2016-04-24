@@ -14,22 +14,23 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"text/template"
 )
 
-var configfile = flag.String("config", "mqtt2influxdb.toml", "Configuration file")
+var (
+	configfile       = flag.String("config", "mqtt2influxdb.toml", "Configuration file.")
+	mqtthost         = flag.String("mqtt", "localhost:1883", "Mqtt host (including port number).")
+	mqttClientID     = flag.String("clientid", "mqtt2influxdb", "ClientID to use when connecting to mqtt broker.")
+	influxdbHost     = flag.String("influxdb", "http://localhost:8086", "InfluxDB host address. Should include both protocol (http or https) and port number.")
+	influxdbDatabase = flag.String("database", "mqtt", "Name of InfluxDB database to use.")
+	testoutput       = flag.Bool("test", false, "Print influxdb insert lines to stdout")
+)
 
+// Config hold the configuration of the mappings from mqtt to InfluxDB.
 type Config struct {
 	DefaultEncoding string
 
-	Mqtt struct {
-		Host     string
-		ClientID string
-	}
-	InfluxDB struct {
-		Host     string
-		Database string
-	}
 	Mappings []*struct {
 		Topic    string
 		Template string
@@ -49,7 +50,6 @@ func getConfig(filename string) Config {
 			mapping.Encoding = conf.DefaultEncoding
 		}
 	}
-
 	return conf
 }
 
@@ -71,14 +71,14 @@ func main() {
 		},
 	})
 
-	// Terminate the Client.
+	// Terminate the Client eventually.
 	defer cli.Terminate()
 
 	// Connect to the MQTT Server.
 	err := cli.Connect(&client.ConnectOptions{
 		Network:  "tcp",
-		Address:  conf.Mqtt.Host,
-		ClientID: []byte(conf.Mqtt.ClientID),
+		Address:  *mqtthost,
+		ClientID: []byte(*mqttClientID),
 	})
 	if err != nil {
 		panic(err)
@@ -95,7 +95,7 @@ func main() {
 		"cbor":    new(codec.CborHandle),
 	}
 
-	influxDBWriteURL := conf.InfluxDB.Host + "/write?db=" + conf.InfluxDB.Database
+	influxDBWriteURL := *influxdbHost + "/write?db=" + *influxdbDatabase
 
 	// Create topic subscriptions
 	subscriptions := make([]*client.SubReq, len(conf.Mappings))
@@ -104,7 +104,6 @@ func main() {
 		topicTemplate := template.Must(template.New(mapping.Topic).Parse(mapping.Template))
 
 		// Create a buffer to send the output of the template to the http post body
-		buffer := new(bytes.Buffer)
 		h := encodingMap[mapping.Encoding]
 
 		subscriptions[i] = &client.SubReq{
@@ -113,10 +112,13 @@ func main() {
 			Handler: func(topicName, message []byte) {
 				// Unmarshal the data into a interface{} object. Probably not the
 				// fastest approach, but works for now.
-				var f interface{}
+
+				buffer := new(bytes.Buffer)
+				var f map[string]interface{}
 				dec := codec.NewDecoderBytes(message, h)
 				err := dec.Decode(&f)
 
+				f["topiclevels"] = strings.Split(string(topicName), "/")
 				// Execute the template
 				err = topicTemplate.Execute(buffer, f)
 				if err != nil {
@@ -124,12 +126,18 @@ func main() {
 				}
 
 				// And send the result off
-				resp, err := http.Post(influxDBWriteURL, "text/plain", buffer)
-				if err != nil {
-					log.Println("Error submitting data to InfluxDB data base: ", err)
+				if *testoutput {
+					fmt.Println(string(topicName))
+					buffer.WriteTo(os.Stdout)
+
+				} else {
+					resp, err := http.Post(influxDBWriteURL, "text/plain", buffer)
+					if err != nil {
+						log.Println("Error submitting data to InfluxDB database: ", err)
+					}
+					// Cleanup the response
+					resp.Body.Close()
 				}
-				// Cleanup the response
-				resp.Body.Close()
 			},
 		}
 	}
