@@ -4,13 +4,13 @@ mqtt2influxdb is a small and simple program that subscribes to mqtt topics and p
 
 ## Building & installing ##
 
-First make sure you have setup your [Go](https://golang.org) environment. After having setup your $GOPATH you can do a
+First make sure you have setup your [Go](https://golang.org) environment. After having setup your `$GOPATH` you can do a
 
     go get github.com/mhe/mqtt2influxdb
 
-to install a mqtt2influxdb binary in your $GOPATH/bin.
+to install a mqtt2influxdb binary in your `$GOPATH/bin`.
 
-Alternatively you can clone this repository somewhere (for example in your $GOPATH/src) and install the dependencies
+Alternatively you can clone this repository somewhere (for example in your `$GOPATH/src`) and install the dependencies
 
     cd mqtt2influxdb 
     go get ...
