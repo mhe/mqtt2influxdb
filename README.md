@@ -1,6 +1,6 @@
 # mqtt2influxdb #
 
-mqtt2influxdb is a small and simple program that subscribes to mqtt topics and publishes messages received to an InfluxDB database. 
+mqtt2influxdb is a small and simple program that connects to an [MQTT](http://mqtt.org/) server, subscribes to MQTT topics, and publishes messages received to an InfluxDB database. 
 
 ## Building & installing ##
 
@@ -49,7 +49,7 @@ Each mapping consists of three items:
 
 - `topic`: the mqtt topic to subscribe to. It can contain wildcards (e.g., `+`). 
 - `template`: a template (using [Go's text/template](https://golang.org/pkg/text/template/)) to build a line according to [InfluxDB's line protocol](https://docs.influxdata.com/influxdb/v0.12/write_protocols/write_syntax/). 
-- `encoding`: specifies the encoding of the message, can be one of four: [json](http://json.org/), [msgpack](https://github.com/msgpack/msgpack), [binc](http://github.com/ugorji/binc), or [cbor](http://cbor.io/]. It can be omitted if a default encoding is specified (the `defaultEncoding` top-level entry).
+- `encoding`: specifies the encoding of the message, can be one of four: [json](http://json.org/), [msgpack](https://github.com/msgpack/msgpack), [binc](http://github.com/ugorji/binc), or [cbor](http://cbor.io/). It can be omitted if a default encoding is specified (the `defaultEncoding` top-level entry).
 
 See the provided example configuration file for more information.
 
@@ -61,3 +61,6 @@ A basic Dockerfile is provided to create a docker image to run mqtt2influxdb in.
 - `INFLUXDB_HOST`
 - `DATABASE_NAME`
 
+## Alternatives ##
+
+Although mqtt2influxdb is fairly flexible due to its template-based approach for building InfluxDB input lines, it might not completely suit you. In that case also consider [InfluxData's](https://influxdata.com/) [telegraf](https://influxdata.com/time-series-platform/telegraf/).
