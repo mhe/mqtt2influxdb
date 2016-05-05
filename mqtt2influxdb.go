@@ -27,7 +27,7 @@ var (
 	mqttClientID     = flag.String("clientid", "mqtt2influxdb", "ClientID to use when connecting to MQTT broker.")
 	influxdbHost     = flag.String("influxdb", "http://localhost:8086", "InfluxDB host address. Should include both protocol (http or https) and port number.")
 	influxdbDatabase = flag.String("database", "mqtt", "Name of the InfluxDB database to use.")
-	testoutput       = flag.Bool("test", false, "Print InfluxDB insert lines to stdout instead of actually submitting data.")
+	testoutput       = flag.Bool("test", false, "Print InfluxDB insert lines to stdout instead of actually submitting data. This option also adds \"-test\" to the ClientID.")
 )
 
 // Config hold the configuration of the mappings from mqtt to InfluxDB.
@@ -76,6 +76,12 @@ func main() {
 
 	// Terminate the Client eventually.
 	defer cli.Terminate()
+
+	// To make sure running clients are not disconnected when testing the
+	// configuration, append "-test" to the clientID.
+	if *testoutput {
+		*mqttClientID += "-test"
+	}
 
 	// Connect to the MQTT Server.
 	err := cli.Connect(&client.ConnectOptions{
