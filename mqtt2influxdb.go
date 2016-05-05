@@ -22,9 +22,9 @@ import (
 )
 
 var (
-	configfile       = flag.String("config", "mqtt2influxdb.toml", "Configuration file with mappings.")
-	mqtthost         = flag.String("mqtt", "localhost:1883", "Mqtt host (including port number).")
-	mqttClientID     = flag.String("clientid", "mqtt2influxdb", "ClientID to use when connecting to mqtt broker.")
+	configfile       = flag.String("config", "mqtt2influxdb.toml", "Configuration file containing the descriptions how to map MQTT messages to InfluxDB points.")
+	mqtthost         = flag.String("mqtt", "localhost:1883", "MQTT host (including port number).")
+	mqttClientID     = flag.String("clientid", "mqtt2influxdb", "ClientID to use when connecting to MQTT broker.")
 	influxdbHost     = flag.String("influxdb", "http://localhost:8086", "InfluxDB host address. Should include both protocol (http or https) and port number.")
 	influxdbDatabase = flag.String("database", "mqtt", "Name of the InfluxDB database to use.")
 	testoutput       = flag.Bool("test", false, "Print InfluxDB insert lines to stdout instead of actually submitting data.")

@@ -29,15 +29,15 @@ mqtt2influxdb has a number of commandline options. Invoking `mqtt2influxdb -h` w
 mqtt2influxdb
 Usage of ./mqtt2influxdb:
   -clientid string
-    	ClientID to use when connecting to mqtt broker. (default "mqtt2influxdb")
+    	ClientID to use when connecting to MQTT broker. (default "mqtt2influxdb")
   -config string
-    	Configuration file with mappings. (default "mqtt2influxdb.toml")
+    	Configuration file containing the descriptions how to map MQTT messages to InfluxDB points. (default "mqtt2influxdb.toml")
   -database string
     	Name of the InfluxDB database to use. (default "mqtt")
   -influxdb string
     	InfluxDB host address. Should include both protocol (http or https) and port number. (default "http://localhost:8086")
   -mqtt string
-    	Mqtt host (including port number). (default "localhost:1883")
+    	MQTT host (including port number). (default "localhost:1883")
   -test
     	Print InfluxDB insert lines to stdout instead of actually submitting data.
 ```
