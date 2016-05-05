@@ -1,6 +1,18 @@
+# Example configuration file for mqtt2influxdb.
+
+# Specify the default encoding, can be overridden in a mapping.
 defaultEncoding = "msgpack"
 
 [[mappings]]
 # utilities/<type>/<direction>/<sensor>
 topic = "utilities/+/+/+"
+
+# For the template we use Go's text/template. In the template you can refer to
+# keys (names) of the deserialized message object.
+
+# A special array (topiclevels) is added that contains the "path" of the topic.
+# For example you can use {{index .topiclevels 2}} to access to third part of
+# the topic.
 template = "{{index .topiclevels 1}}-{{index .topiclevels 3}},unit={{.unit}},direction={{index .topiclevels 2}} value={{.value}} {{.timestamp}}\n"
+# To override the default encoding and use for example json, uncomment the following line.
+# encoding = json
