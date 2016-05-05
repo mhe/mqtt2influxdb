@@ -14,4 +14,4 @@ topic = "utilities/+/+/+"
 # the topic.
 template = "{{index .topiclevels 1}}-{{index .topiclevels 3}},unit={{.unit}},direction={{index .topiclevels 2}} value={{.value}} {{.timestamp}}\n"
 # To override the default encoding and use for example json, uncomment the following line.
-# encoding = json
+# encoding = "json"
