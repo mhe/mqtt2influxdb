@@ -1,5 +1,8 @@
-// mqtt2influxdb is a small program that subscribes to mqtt channels and
-// publishes the data to an InfluxDB timeseries database.
+// mqtt2influxdb is a small and simple program that connects to an MQTT server,
+// subscribes to MQTT topics, and publishes messages received to an InfluxDB
+// database.
+// Copyright (c) 2016 Maarten Everts. See LICENSE.
+
 package main
 
 import (
